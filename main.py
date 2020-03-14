@@ -57,9 +57,7 @@ def home():
 
     if request.method=="GET":
         return ""
-
     else:
-    	
         print(request.get_json(force=True))
         Message(str(request.get_json(force=True)))
         return ":)"
