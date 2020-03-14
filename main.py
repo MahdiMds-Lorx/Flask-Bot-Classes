@@ -1,14 +1,43 @@
 from flask import Flask, request, jsonify
 from requests import post
-app = Flask(__name__)
-
-
 import imghdr
 import mimetypes
 import os
 from uuid import uuid4
+app = Flask(__name__)
 
-from telegram import TelegramError
+
+def _lstrip_str(in_s, lstr):
+    """
+    Args:
+        in_s (:obj:`str`): in string
+        lstr (:obj:`str`): substr to strip from left side
+    Returns:
+        str:
+    """
+    if in_s.startswith(lstr):
+        res = in_s[len(lstr):]
+    else:
+        res = in_s
+    return res
+
+
+class TelegramError(Exception):
+    def __init__(self, message):
+        super(TelegramError, self).__init__()
+
+        msg = _lstrip_str(message, 'Error: ')
+        msg = _lstrip_str(msg, '[Error]: ')
+        msg = _lstrip_str(msg, 'Bad Request: ')
+        if msg != message:
+            # api_error - capitalize the msg...
+            msg = msg.capitalize()
+        self.message = msg
+
+    def __str__(self):
+        return '%s' % (self.message)
+
+    
 
 DEFAULT_MIME_TYPE = 'application/octet-stream'
 
@@ -130,13 +159,14 @@ class Bot:
         
     def send_photo(self , chat_id , photo , file_ref=None , caption=None , parse_mode = "markdown" , disable_notification=False , reply_to_message_id=None , schedule_time=None , reply_markup=None):
         try:
-            u = self.call('sendPhoto' , chat_id=chat_id , photo = photo , file_ref=file_ref , caption=caption , parse_mode=parse_mode , disable_notification=disable_notification , reply_to_message_id=reply_to_message_id , reply_markup=reply_markup)
+            mahdi = InputFile(mydoc(photo))
+            u = self.call('sendPhoto' , chat_id=chat_id , photo = mahdi , file_ref=file_ref , caption=caption , parse_mode=parse_mode , disable_notification=disable_notification , reply_to_message_id=reply_to_message_id , reply_markup=reply_markup)
         except Exception as ex:
             return str(ex)
         
     def send_document(self , chat_id , document , file_ref=None , thumb=None , caption=None,parse_mode="markdown" , disable_notification=False , reply_to_message_id=None , schedule_date=None,reply_markup=None):
         try:
-        mahdi = InputFile(mydoc(document))
+            mahdi = InputFile(mydoc(document))
             u = self.call('sendDocument' , chat_id=chat_id , document=mahdi , file_ref=file_ref , thumb=thumb , caption=caption , parse_mode=parse_mode , disable_notification=disable_notification , reply_to_message_id=reply_to_message_id , reply_markup=reply_markup , schedule_date=schedule_date)
         except Exception as ex:
             return str(ex)
