@@ -40,7 +40,7 @@ class Bot:
 	def send_message(self, chat_id, text, parse_mode='markdown', disable_web_page_preview=True, disable_notification=False, reply_to_message_id=None, reply_markup=None,schedule_date=None):
 		u = self.call('sendMessage',chat_id=chat_id, text=text, parse_mode=parse_mode, disable_web_page_preview=disable_web_page_preview, disable_notification=disable_notification, reply_to_message_id=reply_to_message_id, schedule_date=schedule_date ,reply_markup=reply_markup)
 
-	def forward_message(self, chat_id, from_chat_id, message_ids, disable_notification=False , as_copy=False);
+	def forward_message(self, chat_id, from_chat_id, message_ids, disable_notification=False , as_copy=False):
 		if isinstance(message_ids, list):
 			for msg_id in message_ids:
 				u = self.call('forwardMessage',chat_id=chat_id, from_chat_id=from_chat_id, message_id=msg_id, disable_notification=disable_notification , as_copy=as_copy)
